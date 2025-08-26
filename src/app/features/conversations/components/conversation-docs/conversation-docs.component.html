@@ -1,23 +1,25 @@
-<div class="mt-4 rounded-lg border border-[#00187C]/10 bg-white/80">
-  <div class="px-4 py-2 border-b border-[#00187C]/10 flex items-center justify-between">
-    <h3 class="text-sm font-medium text-[#00187C]">Supporting documents</h3>
-    <span class="text-[10px] text-[#00187C]/60">{{ documents.length }}</span>
+@if (shouldShowDocuments && documents.length > 0) {
+  <div class="mt-4 rounded-lg border border-[#00187C]/10 bg-white/80">
+    <div class="px-4 py-2 border-b border-[#00187C]/10 flex items-center justify-between">
+      <h3 class="text-sm font-medium text-[#00187C]">Supporting documents</h3>
+      <span class="text-[10px] text-[#00187C]/60">{{ documents.length }}</span>
+    </div>
+    <div class="p-3 grid gap-3 md:grid-cols-2">
+      @for (d of documents; track d.document_id) {
+        <article class="rounded border border-[#00187C]/10 bg-white/90 p-3">
+          <div class="flex items-start justify-between gap-2">
+            <h4 class="text-xs font-medium text-[#00187C] truncate" title="{{ d.title }}">{{ d.title || 'Untitled' }}</h4>
+            <span class="text-[10px] rounded px-2 py-0.5 bg-[#00187C]/5 text-[#00187C]/70 border border-[#00187C]/10">{{ d.source }}</span>
+          </div>
+<!--          <p class="mt-2 text-[11px] text-[#00187C]/70 line-clamp-4 whitespace-pre-wrap" style="display:-webkit-box;-webkit-line-clamp:4;line-clamp:4;-webkit-box-orient:vertical; overflow:hidden;">-->
+<!--            {{ d.content }}-->
+<!--          </p>-->
+<!--          <div class="mt-2 text-[11px]">-->
+<!--            <a *ngIf="d.url" [href]="d.url" target="_blank" rel="noreferrer" class="text-[#00187C] hover:underline">Open source</a>-->
+<!--            <span *ngIf="!d.url" class="text-[#00187C]/40">No link available</span>-->
+<!--          </div>-->
+        </article>
+      }
+    </div>
   </div>
-  <div class="p-3 grid gap-3 md:grid-cols-2">
-    @for (d of documents; track d.document_id) {
-      <article class="rounded border border-[#00187C]/10 bg-white/90 p-3">
-        <div class="flex items-start justify-between gap-2">
-          <h4 class="text-xs font-medium text-[#00187C] truncate" title="{{ d.title }}">{{ d.title || 'Untitled' }}</h4>
-          <span class="text-[10px] rounded px-2 py-0.5 bg-[#00187C]/5 text-[#00187C]/70 border border-[#00187C]/10">{{ d.source }}</span>
-        </div>
-        <p class="mt-2 text-[11px] text-[#00187C]/70 line-clamp-4 whitespace-pre-wrap" style="display:-webkit-box;-webkit-line-clamp:4;line-clamp:4;-webkit-box-orient:vertical; overflow:hidden;">
-          {{ d.content }}
-        </p>
-        <div class="mt-2 text-[11px]">
-          <a *ngIf="d.url" [href]="d.url" target="_blank" rel="noreferrer" class="text-[#00187C] hover:underline">Open source</a>
-          <span *ngIf="!d.url" class="text-[#00187C]/40">No link available</span>
-        </div>
-      </article>
-    }
-  </div>
-</div>
+}

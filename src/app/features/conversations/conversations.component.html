@@ -22,7 +22,7 @@
         <div class="rounded-lg border border-[#00187C]/10 bg-white/80 p-4">
           <div class="flex items-center justify-between">
             <h2 class="text-sm font-medium text-[#00187C]">Data Source</h2>
-            <span class="text-[10px] text-[#00187C]/60">Test</span>
+            <span class="text-[10px] text-[#00187C]/60"></span>
           </div>
           <p class="mt-1 text-[11px] text-[#00187C]/60">Choose where your question data comes from.</p>
 
@@ -93,7 +93,11 @@
             @if (selected()) {
               <app-conversation-thread [messages]="selected()?.messages || []" [limit]="200" />
               @if (lastDocs().length) {
-                <app-conversation-docs [documents]="lastDocs()" />
+                <app-conversation-docs
+                  [documents]="lastDocs()"
+                  [messages]="selected()?.messages || []"
+                  [latestAssistantMessageId]="latestAssistantMessageId()"
+                />
               }
             } @else {
               <div class="rounded border border-dashed border-[#00187C]/20 p-8 text-center bg-white/60">
@@ -116,10 +120,34 @@
                 <p class="mt-1 text-xs text-[#00187C]/60">Ask anything about this workspace. I can help you explore code, generate docs, and more.</p>
 
                 <div class="mt-4 flex flex-wrap items-center justify-center gap-2">
-                  <span class="text-[11px] rounded-full border border-[#00187C]/15 bg-white/70 px-3 py-1 text-[#00187C]/70">Summarize the repo</span>
-                  <span class="text-[11px] rounded-full border border-[#00187C]/15 bg-white/70 px-3 py-1 text-[#00187C]/70">Find API endpoints</span>
-                  <span class="text-[11px] rounded-full border border-[#00187C]/15 bg-white/70 px-3 py-1 text-[#00187C]/70">Explain a file</span>
-                  <span class="text-[11px] rounded-full border border-[#00187C]/15 bg-white/70 px-3 py-1 text-[#00187C]/70">Propose refactors</span>
+                  <button
+                    (click)="onSubmitText('Summarize the repo')"
+                    class="text-[11px] rounded-full border border-[#00187C]/15 bg-white/70 px-3 py-1 text-[#00187C]/70 hover:bg-[#00187C]/5 transition-colors focus:outline-none focus:ring-2 focus:ring-[#00187C]/20"
+                    [disabled]="isStreaming()"
+                  >
+                    Summarize the repo
+                  </button>
+                  <button
+                    (click)="onSubmitText('Find API endpoints')"
+                    class="text-[11px] rounded-full border border-[#00187C]/15 bg-white/70 px-3 py-1 text-[#00187C]/70 hover:bg-[#00187C]/5 transition-colors focus:outline-none focus:ring-2 focus:ring-[#00187C]/20"
+                    [disabled]="isStreaming()"
+                  >
+                    Find API endpoints
+                  </button>
+                  <button
+                    (click)="onSubmitText('Explain a file')"
+                    class="text-[11px] rounded-full border border-[#00187C]/15 bg-white/70 px-3 py-1 text-[#00187C]/70 hover:bg-[#00187C]/5 transition-colors focus:outline-none focus:ring-2 focus:ring-[#00187C]/20"
+                    [disabled]="isStreaming()"
+                  >
+                    Explain a file
+                  </button>
+                  <button
+                    (click)="onSubmitText('Propose refactors')"
+                    class="text-[11px] rounded-full border border-[#00187C]/15 bg-white/70 px-3 py-1 text-[#00187C]/70 hover:bg-[#00187C]/5 transition-colors focus:outline-none focus:ring-2 focus:ring-[#00187C]/20"
+                    [disabled]="isStreaming()"
+                  >
+                    Propose refactors
+                  </button>
                 </div>
               </div>
             }

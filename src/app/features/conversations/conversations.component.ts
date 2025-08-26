@@ -40,8 +40,9 @@ export class ConversationsComponent implements OnInit {
   // Streaming flag (disable composer while assistant is streaming)
   readonly isStreaming = signal(false);
 
-  // Last chat response documents
+  // Last chat response documents and tracking
   readonly lastDocs = signal<ChatDocument[]>([]);
+  readonly latestAssistantMessageId = signal<string | null>(null);
 
   // Data source multi-selection for new questions
   readonly dataSources = ['Jira', 'GitHub', 'Other'] as const;
@@ -146,8 +147,7 @@ export class ConversationsComponent implements OnInit {
       const store = this.chat.conversations(this.workspaceId);
       const now = Date.now();
       const assistantMessageId = 'm-' + Math.random().toString(36).slice(2);
-
-      // Immediately add user message and assistant placeholder
+      this.latestAssistantMessageId.set(assistantMessageId);
       store.update(list => list.map(c => {
         if (c.id !== existingId) return c;
         return {
@@ -171,6 +171,7 @@ export class ConversationsComponent implements OnInit {
         system_prompt: 'default',
       }).subscribe({
         next: (res) => {
+          // Update the documents and mark the latest assistant message as complete
           this.lastDocs.set(res.documents || []);
           // Now, find the placeholder and update it
           store.update(list => list.map(c => {
