@@ -3,7 +3,15 @@
     <div class="message-container" [ngClass]="{'user-message': m.role === 'user', 'assistant-message': m.role === 'assistant'}">
       <div class="message-bubble">
         <div class="role-label">{{ m.role }}</div>
-        <div class="whitespace-pre-wrap">{{ m.content }}</div>
+        <div class="whitespace-pre-wrap">
+          @if (m.content === '...') {
+            <div class="loading-dots">
+              <span></span><span></span><span></span>
+            </div>
+          } @else {
+            {{ m.content }}
+          }
+        </div>
       </div>
     </div>
   }

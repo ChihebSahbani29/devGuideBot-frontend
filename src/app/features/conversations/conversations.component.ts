@@ -143,6 +143,23 @@ export class ConversationsComponent implements OnInit {
       });
     } else {
       // Send message via /chat endpoint and append assistant reply
+      const store = this.chat.conversations(this.workspaceId);
+      const now = Date.now();
+      const assistantMessageId = 'm-' + Math.random().toString(36).slice(2);
+
+      // Immediately add user message and assistant placeholder
+      store.update(list => list.map(c => {
+        if (c.id !== existingId) return c;
+        return {
+          ...c,
+          messages: [
+            ...c.messages,
+            { id: 'm-' + Math.random().toString(36).slice(2), role: 'user' as const, content: prefixed, createdAt: now - 1 },
+            { id: assistantMessageId, role: 'assistant' as const, content: '...', createdAt: now } // Use '...' as loading indicator
+          ]
+        };
+      }));
+
       this.api.chat(this.workspaceId, existingId, {
         message: prefixed,
         source_types: this.selectedSources().map(s => s.toLowerCase()),
@@ -154,23 +171,36 @@ export class ConversationsComponent implements OnInit {
         system_prompt: 'default',
       }).subscribe({
         next: (res) => {
-          const store = this.chat.conversations(this.workspaceId);
-          const now = Date.now();
           this.lastDocs.set(res.documents || []);
+          // Now, find the placeholder and update it
           store.update(list => list.map(c => {
             if (c.id !== existingId) return c;
             return {
               ...c,
-              messages: [
-                ...c.messages,
-                { id: 'm-' + Math.random().toString(36).slice(2), role: 'user' as const, content: prefixed, createdAt: now - 1 },
-                { id: 'm-' + Math.random().toString(36).slice(2), role: 'assistant' as const, content: res.response, createdAt: now },
-              ]
+              messages: c.messages.map(m => {
+                if (m.id === assistantMessageId) {
+                  return { ...m, content: res.response }; // Update content
+                }
+                return m;
+              })
             };
           }));
           this.isStreaming.set(false);
         },
         error: (err: unknown) => {
+          // Also handle error: maybe update the placeholder to show an error message
+          store.update(list => list.map(c => {
+            if (c.id !== existingId) return c;
+            return {
+              ...c,
+              messages: c.messages.map(m => {
+                if (m.id === assistantMessageId) {
+                  return { ...m, content: 'Error: Could not get response.' };
+                }
+                return m;
+              })
+            };
+          }));
           console.error('Failed to chat', err);
           this.isStreaming.set(false);
         },
