@@ -25,7 +25,6 @@
           <h3 class="text-xl md:text-2xl font-light text-[#00187C] leading-snug">{{ ws.name }}</h3>
           <span class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-light text-white shadow"
                 style="background-color:#8F9424">
-            Test
           </span>
         </div>
 
@@ -55,7 +54,7 @@
             @if (ws.confluence) { <span class="rounded-full px-2 py-0.5 border border-[#00187C]/20 bg-white text-[#00187C]">Confluence</span> }
             @if (ws.sharepoint) { <span class="rounded-full px-2 py-0.5 border border-[#00187C]/20 bg-white text-[#00187C]">SharePoint</span> }
             @if (!ws.jira && !ws.confluence && !ws.sharepoint) {
-              <span class="uppercase tracking-wide">No integrations</span>
+              <span class="uppercase tracking-wide"></span>
             }
           </span>
         </div>
