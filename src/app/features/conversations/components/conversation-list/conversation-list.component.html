@@ -1,0 +1,20 @@
+<div class="rounded-lg border border-[#00187C]/10 bg-white/80">
+  <ul>
+    @for (c of items; track c.id) {
+      <li>
+        <button class="w-full text-left px-3 py-2 text-sm hover:bg-[#00187C]/5"
+                [ngClass]="{ 'bg-[#00187C]/10': c.id === selectedId }"
+                (click)="select.emit(c.id)">
+          <div class="font-medium text-[#00187C] truncate">{{ c.title }}</div>
+          <div class="text-xs text-[#00187C]/60 truncate">{{ c.createdAt | date: 'short' }}</div>
+          @if (c.messages.length) {
+            <div class="text-xs text-[#00187C]/50 truncate">{{ c.messages[c.messages.length-1].content }}</div>
+          }
+        </button>
+      </li>
+    }
+    @empty {
+      <li class="p-3 text-xs text-[#00187C]/50">No conversations. Start a new one.</li>
+    }
+  </ul>
+</div>

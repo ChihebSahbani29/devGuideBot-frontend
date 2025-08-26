@@ -1,0 +1,59 @@
+<section class="relative isolate w-full min-h-[100vh] overflow-hidden">
+  <div class="mx-auto p-12 flex flex-col min-h-[100vh]">
+    <header class="text-center md:text-left w-full">
+      <h1 class="text-4xl md:text-5xl font-light tracking-tight text-[#00187C]">
+        Workspaces
+        <span class="align-top text-base md:text-lg text-[#00187C]/60">({{ total() }})</span>
+      </h1>
+      <p class="mt-3 text-[#00187C]/70 font-light max-w-2xl md:max-w-3xl">
+        Organize your repositories and knowledge sources. Seamless integrations, elegant layout.
+      </p>
+      <div class="mt-6 flex flex-col sm:flex-row gap-3 sm:items-center w-full">
+        <input
+          type="search"
+          placeholder="Search workspaces..."
+          class="w-full flex-1 rounded-lg border border-[#00187C]/20 bg-white/80 backdrop-blur px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#8F9424]"
+        />
+        <button class="border inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-light text-[#00187C] shadow-sm hover:shadow transition hover:bg-[#8F9424] hover:text-white w-full sm:w-auto"
+          >
+          Filters
+        </button>
+        <button class="border inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-light text-[#00187C] shadow-sm hover:shadow transition hover:bg-[#8F9424] hover:text-white w-full sm:w-auto"
+                routerLink="new">
+          + New workspace
+        </button>
+      </div>
+    </header>
+
+    <div class="mt-10 md:mt-12 flex flex-col gap-6 flex-1">
+      @if (loading()) {
+        <div class="flex-1 grid place-items-center">
+          <app-loader message="Loading workspaces…"></app-loader>
+        </div>
+      } @else if (total() === 0) {
+        <talan-empty-state
+          title="No workspaces yet"
+          description="Create your first workspace to organize repositories and knowledge sources."
+        />
+      } @else {
+        <talan-workspaces-view
+          [workspaces]="paginated()"
+          [total]="total()"
+          (select)="onSelect($event)"
+        />
+
+        <!-- Pagination -->
+        <div class="mt-auto">
+          <talan-pagination
+            [total]="total()"
+            [page]="page()"
+            [pageSize]="pageSize()"
+            (pageChange)="onPageChange($event)"
+            (pageSizeChange)="onPageSizeChange($event)"
+          />
+        </div>
+      }
+    </div>
+  </div>
+</section>
+

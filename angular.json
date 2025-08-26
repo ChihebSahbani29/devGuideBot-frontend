@@ -12,7 +12,7 @@
       },
       "root": "",
       "sourceRoot": "src",
-      "prefix": "app",
+      "prefix": "talan",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:application",
@@ -98,5 +98,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": "4e6098fe-714b-479b-a4db-5f0113928de3"
   }
 }

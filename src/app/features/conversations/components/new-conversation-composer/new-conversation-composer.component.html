@@ -1,0 +1,17 @@
+<form (ngSubmit)="onSubmit()" class="flex items-start gap-2">
+  <textarea
+    [(ngModel)]="text"
+    name="text"
+    rows="3"
+    class="flex-1 w-full rounded border border-[#00187C]/20 p-2 text-sm text-[#00187C] focus:outline-none focus:ring-1 focus:ring-[#00187C]"
+    placeholder="Ask something about this workspace..."
+    [disabled]="disabled"
+    [attr.aria-busy]="disabled"
+    (keydown)="onKeydown($event)"
+  ></textarea>
+  <button type="submit" class="self-end inline-flex items-center rounded-lg px-4 py-2 text-sm font-light text-white shadow-sm transition disabled:opacity-60"
+          [disabled]="disabled"
+          style="background: linear-gradient(90deg, #00187C, #E04580)">
+    Send
+  </button>
+</form>

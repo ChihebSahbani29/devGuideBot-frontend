@@ -1,0 +1,73 @@
+<div class="space-y-6">
+  <!-- Top status -->
+  <div class="flex items-center justify-between">
+    <p class="text-sm font-light text-[#00187C]">
+      @if (total() === 0) {
+        No workspaces yet.
+      } @else {
+        Showing {{ total() }} workspace{{ total() === 1 ? '' : 's' }}
+      }
+    </p>
+  </div>
+
+  <!-- Responsive landing grid -->
+  <ul class="grid gap-6 md:grid-cols-2">
+    @for (ws of workspaces(); track ws.id) {
+      <li
+        class="group relative cursor-pointer rounded-xl border border-[#00187C]/10 bg-white/90 p-5 shadow-sm ring-1 ring-transparent transition-all hover:-translate-y-0.5 hover:shadow-lg hover:ring-[#00187C]/10"
+        (click)="onClick(ws)"
+      >
+        <!-- Decorative glow -->
+        <div class="pointer-events-none absolute inset-0 rounded-2xl opacity-0 blur-xl transition-opacity duration-300 group-hover:opacity-100"
+             style="background: radial-gradient( 60% 60% at 50% 0%, #00187C22, transparent 70% )"></div>
+
+        <div class="relative z-10 flex items-start justify-between gap-3">
+          <h3 class="text-xl md:text-2xl font-light text-[#00187C] leading-snug">{{ ws.name }}</h3>
+          <span class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-light text-white shadow"
+                style="background-color:#8F9424">
+            Test
+          </span>
+        </div>
+
+        <p class="relative z-10 mt-3 text-[15px] md:text-base font-light text-[#00187C]/70 line-clamp-3">{{ ws.description }}</p>
+
+        <!-- Meta badges -->
+        <div class="relative z-10 mt-5 flex flex-wrap items-center gap-2">
+          @if (ws.github) {
+            <a class="inline-flex items-center gap-1 text-xs font-light text-[#00187C] rounded-full border border-[#00187C]/20 bg-white px-2.5 py-1 shadow"
+               target="_blank" rel="noopener" [href]="ws.github.url"
+               (click)="$event.stopPropagation()">
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="opacity-90">
+                <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.01.08-2.11 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.91.08 2.11.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+              </svg>
+              {{ ws.github.default_owner }}/{{ ws.github.default_repo }}
+            </a>
+            <span class="inline-flex items-center rounded-full border border-[#00187C]/20 bg-white px-2.5 py-1 text-[11px] font-light text-[#00187C]/80">
+              Branch: {{ ws.github.default_branch }}
+            </span>
+          } @else {
+            <span class="text-xs font-light text-[#00187C]/50">No GitHub linked</span>
+          }
+
+          <!-- Integrations summary on the right -->
+          <span class="ml-auto inline-flex items-center gap-1 text-[10px] font-light text-[#00187C]/70">
+            @if (ws.jira) { <span class="rounded-full px-2 py-0.5 border border-[#00187C]/20 bg-white text-[#00187C]">Jira</span> }
+            @if (ws.confluence) { <span class="rounded-full px-2 py-0.5 border border-[#00187C]/20 bg-white text-[#00187C]">Confluence</span> }
+            @if (ws.sharepoint) { <span class="rounded-full px-2 py-0.5 border border-[#00187C]/20 bg-white text-[#00187C]">SharePoint</span> }
+            @if (!ws.jira && !ws.confluence && !ws.sharepoint) {
+              <span class="uppercase tracking-wide">No integrations</span>
+            }
+          </span>
+        </div>
+
+        <!-- Footer CTA -->
+        <div class="relative z-10 mt-5 flex items-center justify-end">
+          <button class="border inline-flex items-center rounded px-3 py-1.5 text-xs font-light text-[#00187C] shadow-sm transition group-hover:translate-x-0.5"
+                  (click)="$event.stopPropagation(); onClick(ws)">
+            Open
+          </button>
+        </div>
+      </li>
+    }
+  </ul>
+</div>

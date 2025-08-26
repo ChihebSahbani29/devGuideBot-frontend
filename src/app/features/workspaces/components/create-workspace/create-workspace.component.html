@@ -1,0 +1,262 @@
+<section class="min-h-[calc(100vh-80px)] w-full relative overflow-hidden">
+  @if (loading()) {
+    <div class="absolute inset-0 z-30 grid place-items-center bg-white/95 backdrop-blur">
+      <app-loader message="Preparing workspace creator…"></app-loader>
+    </div>
+  }
+  <div class="mx-auto p-8">
+    <div class="flex items-start justify-between">
+      <div>
+        <h1 class="text-2xl md:text-3xl font-light text-[#00187C]">Create workspace</h1>
+        <p class="mt-2 text-sm text-[#00187C]/70">Connect your tools. One place to reason about everything.</p>
+        <!-- Stepper -->
+        <div class="mt-4 flex items-center gap-2 text-[11px] text-[#00187C]/80">
+          <button type="button" (click)="setStep(1)" [class]="'inline-flex items-center gap-1 rounded-full px-3 py-1 border transition ' + (step()===1 ? 'bg-[#00187C] text-white border-[#00187C]' : 'bg-white/80 border-[#00187C]/20 text-[#00187C]')">1 • Basics</button>
+          <button type="button" (click)="setStep(2)" [class]="'inline-flex items-center gap-1 rounded-full px-3 py-1 border transition ' + (step()===2 ? 'bg-[#00187C] text-white border-[#00187C]' : 'bg-white/70 border-[#00187C]/20 text-[#00187C]')">2 • Providers</button>
+          <button type="button" (click)="setStep(3)" [class]="'inline-flex items-center gap-1 rounded-full px-3 py-1 border transition ' + (step()===3 ? 'bg-[#00187C] text-white border-[#00187C]' : 'bg-white/60 border-[#00187C]/20 text-[#00187C]')">3 • Review</button>
+        </div>
+      </div>
+      <a routerLink="/workspaces" class="rounded-md border border-[#00187C]/20 bg-white/80 px-3 py-2 text-xs text-[#00187C] hover:bg-white">Back to workspaces</a>
+    </div>
+
+    <form class="mt-6 grid md:grid-cols-2 gap-4 pb-24" (ngSubmit)="onSubmit()">
+      <!-- STEP 1: Basics + Quick templates -->
+      @if (step() === 1) {
+        <div class="space-y-4">
+          <div class="rounded-xl border border-[#00187C]/10 bg-white/80 p-4 shadow-sm">
+            <h4 class="text-sm font-medium text-[#00187C]">Basics</h4>
+            <div class="mt-3 grid gap-2">
+              <input class="rounded border border-[#00187C]/20 px-3 py-2 text-sm" placeholder="Name" [(ngModel)]="form.name" (ngModelChange)="bumpVersion()" name="name" />
+              <textarea class="rounded border border-[#00187C]/20 px-3 py-2 text-sm" rows="2" placeholder="Description" [(ngModel)]="form.description" (ngModelChange)="bumpVersion()" name="description"></textarea>
+            </div>
+          </div>
+
+          <div class="rounded-xl border border-[#00187C]/10 bg-white/80 p-4 shadow-sm">
+            <h4 class="text-sm font-medium text-[#00187C]">Quick templates</h4>
+            <div class="mt-3 grid sm:grid-cols-3 gap-2">
+              <button type="button" (click)="selectTemplate('github_only')" class="rounded-lg border border-[#00187C]/20 px-3 py-2 text-xs text-left hover:border-[#00187C]/40">
+                <div class="font-medium text-[#00187C]">GitHub only</div>
+                <div class="mt-1 text-[11px] text-[#00187C]/70">Repos + Issues</div>
+              </button>
+              <button type="button" (click)="selectTemplate('atlassian_suite')" class="rounded-lg border border-[#00187C]/20 px-3 py-2 text-xs text-left hover:border-[#00187C]/40">
+                <div class="font-medium text-[#00187C]">Atlassian suite</div>
+                <div class="mt-1 text-[11px] text-[#00187C]/70">Jira + Confluence</div>
+              </button>
+              <button type="button" (click)="selectTemplate('enterprise_full')" class="rounded-lg border border-[#00187C]/20 px-3 py-2 text-xs text-left hover:border-[#00187C]/40">
+                <div class="font-medium text-[#00187C]">Enterprise</div>
+                <div class="mt-1 text-[11px] text-[#00187C]/70">Jira + Confluence + SharePoint + GitHub</div>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <div class="rounded-xl border border-[#00187C]/10 bg-white/80 p-4 shadow-sm">
+            <h4 class="text-sm font-medium text-[#00187C]">What you'll configure next</h4>
+            <div class="mt-3 flex flex-wrap gap-2 text-[11px]">
+              @for (p of enabledProviders(); track p) {
+                <span class="rounded-full px-2 py-1 border border-[#00187C]/20">{{ p }}</span>
+              }
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- STEP 2: Provider toggles + conditional sections -->
+      @if (step() === 2) {
+        <div class="md:col-span-2 rounded-xl border border-[#00187C]/10 bg-white/80 p-4 shadow-sm">
+          <h4 class="text-sm font-medium text-[#00187C]">Enable providers</h4>
+          <div class="mt-3 grid sm:grid-cols-5 gap-2 text-xs">
+            <button type="button" (click)="toggleProvider('jira')" [class]="'rounded px-3 py-2 border transition ' + (providers().jira ? 'bg-[#00187C] text-white border-[#00187C]' : 'bg-white/80 border-[#00187C]/20 text-[#00187C]')">Jira</button>
+            <button type="button" (click)="toggleProvider('confluence')" [class]="'rounded px-3 py-2 border transition ' + (providers().confluence ? 'bg-[#00187C] text-white border-[#00187C]' : 'bg-white/80 border-[#00187C]/20 text-[#00187C]')">Confluence</button>
+            <button type="button" (click)="toggleProvider('sharepoint')" [class]="'rounded px-3 py-2 border transition ' + (providers().sharepoint ? 'bg-[#00187C] text-white border-[#00187C]' : 'bg-white/80 border-[#00187C]/20 text-[#00187C]')">SharePoint</button>
+            <button type="button" (click)="toggleProvider('github')" [class]="'rounded px-3 py-2 border transition ' + (providers().github ? 'bg-[#00187C] text-white border-[#00187C]' : 'bg-white/80 border-[#00187C]/20 text-[#00187C]')">GitHub</button>
+            <button type="button" (click)="toggleProvider('gitlab')" [class]="'rounded px-3 py-2 border transition ' + (providers().gitlab ? 'bg-[#00187C] text-white border-[#00187C]' : 'bg-white/80 border-[#00187C]/20 text-[#00187C]')">GitLab</button>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          @if (providers().jira) {
+            <div class="rounded-xl border border-[#00187C]/10 bg-white/80 p-4 shadow-sm">
+              <h4 class="text-sm font-medium text-[#00187C]">Jira</h4>
+              <div class="mt-3 grid gap-2">
+                <input class="rounded border border-[#00187C]/20 px-3 py-2 text-xs" placeholder="URL" [(ngModel)]="form.jira.url" (ngModelChange)="bumpVersion()" name="jira_url" />
+                <input class="rounded border border-[#00187C]/20 px-3 py-2 text-xs" placeholder="Email" [(ngModel)]="form.jira.email" (ngModelChange)="bumpVersion()" name="jira_email" />
+                <input class="rounded border border-[#00187C]/20 px-3 py-2 text-xs" placeholder="API token" [(ngModel)]="form.jira.api_token" (ngModelChange)="bumpVersion()" name="jira_api_token" />
+                <input class="rounded border border-[#00187C]/20 px-3 py-2 text-xs" placeholder="Project key" [(ngModel)]="form.jira.project_key" (ngModelChange)="bumpVersion()" name="jira_project_key" />
+              </div>
+            </div>
+          }
+
+          @if (providers().confluence) {
+            <div class="rounded-xl border border-[#00187C]/10 bg-white/80 p-4 shadow-sm">
+              <h4 class="text-sm font-medium text-[#00187C]">Confluence</h4>
+              <div class="mt-3 grid gap-2">
+                <input class="rounded border border-[#00187C]/20 px-3 py-2 text-xs" placeholder="URL" [(ngModel)]="form.confluence.url" (ngModelChange)="bumpVersion()" name="confluence_url" />
+                <input class="rounded border border-[#00187C]/20 px-3 py-2 text-xs" placeholder="Email" [(ngModel)]="form.confluence.email" (ngModelChange)="bumpVersion()" name="confluence_email" />
+                <input class="rounded border border-[#00187C]/20 px-3 py-2 text-xs" placeholder="API token" [(ngModel)]="form.confluence.api_token" (ngModelChange)="bumpVersion()" name="confluence_api_token" />
+                <input class="rounded border border-[#00187C]/20 px-3 py-2 text-xs" placeholder="Space key" [(ngModel)]="form.confluence.space_key" (ngModelChange)="bumpVersion()" name="confluence_space_key" />
+              </div>
+            </div>
+          }
+        </div>
+
+        <div class="space-y-4">
+          @if (providers().sharepoint) {
+            <div class="rounded-xl border border-[#00187C]/10 bg-white/80 p-4 shadow-sm">
+              <h4 class="text-sm font-medium text-[#00187C]">SharePoint</h4>
+              <div class="mt-3 grid gap-2">
+                <input class="rounded border border-[#00187C]/20 px-3 py-2 text-xs" placeholder="Site URL" [(ngModel)]="form.sharepoint.site_url" (ngModelChange)="bumpVersion()" name="sp_site_url" />
+                <input class="rounded border border-[#00187C]/20 px-3 py-2 text-xs" placeholder="Client ID" [(ngModel)]="form.sharepoint.client_id" (ngModelChange)="bumpVersion()" name="sp_client_id" />
+                <input class="rounded border border-[#00187C]/20 px-3 py-2 text-xs" placeholder="Client Secret" [(ngModel)]="form.sharepoint.client_secret" (ngModelChange)="bumpVersion()" name="sp_client_secret" />
+                <input class="rounded border border-[#00187C]/20 px-3 py-2 text-xs" placeholder="Tenant ID" [(ngModel)]="form.sharepoint.tenant_id" (ngModelChange)="bumpVersion()" name="sp_tenant_id" />
+              </div>
+            </div>
+          }
+
+          @if (providers().github) {
+            <div class="rounded-xl border border-[#00187C]/10 bg-white/80 p-4 shadow-sm">
+              <h4 class="text-sm font-medium text-[#00187C]">GitHub</h4>
+              <div class="mt-3 grid gap-2">
+                @if (!githubValid()) {
+                  <div class="text-[11px] text-red-600">Please fill URL, Access token, Owner, Repo and Branch for GitHub.</div>
+                }
+                <input class="rounded border border-[#00187C]/20 px-3 py-2 text-xs" placeholder="URL" [(ngModel)]="form.github.url" (ngModelChange)="bumpVersion()" name="gh_url" />
+                <input class="rounded border border-[#00187C]/20 px-3 py-2 text-xs" placeholder="Access token" [(ngModel)]="form.github.access_token" (ngModelChange)="bumpVersion()" name="gh_access_token" />
+                <div class="grid grid-cols-3 gap-2">
+                  <input class="rounded border border-[#00187C]/20 px-3 py-2 text-xs" placeholder="Owner" [(ngModel)]="form.github.default_owner" (ngModelChange)="bumpVersion()" name="gh_owner" />
+                  <input class="rounded border border-[#00187C]/20 px-3 py-2 text-xs" placeholder="Repo" [(ngModel)]="form.github.default_repo" (ngModelChange)="bumpVersion()" name="gh_repo" />
+                  <input class="rounded border border-[#00187C]/20 px-3 py-2 text-xs" placeholder="Branch" [(ngModel)]="form.github.default_branch" (ngModelChange)="bumpVersion()" name="gh_branch" />
+                </div>
+              </div>
+            </div>
+          }
+
+          @if (providers().gitlab) {
+            <div class="rounded-xl border border-[#00187C]/10 bg-white/80 p-4 shadow-sm">
+              <h4 class="text-sm font-medium text-[#00187C]">GitLab</h4>
+              <div class="mt-3 grid gap-2">
+                <input class="rounded border border-[#00187C]/20 px-3 py-2 text-xs" placeholder="URL" [(ngModel)]="form.gitlab.url" (ngModelChange)="bumpVersion()" name="gl_url" />
+                <input class="rounded border border-[#00187C]/20 px-3 py-2 text-xs" placeholder="Access token" [(ngModel)]="form.gitlab.access_token" (ngModelChange)="bumpVersion()" name="gl_access_token" />
+                <div class="grid grid-cols-3 gap-2">
+                  <input class="rounded border border-[#00187C]/20 px-3 py-2 text-xs" placeholder="Owner" [(ngModel)]="form.gitlab.default_owner" (ngModelChange)="bumpVersion()" name="gl_owner" />
+                  <input class="rounded border border-[#00187C]/20 px-3 py-2 text-xs" placeholder="Repo" [(ngModel)]="form.gitlab.default_repo" (ngModelChange)="bumpVersion()" name="gl_repo" />
+                  <input class="rounded border border-[#00187C]/20 px-3 py-2 text-xs" placeholder="Branch" [(ngModel)]="form.gitlab.default_branch" (ngModelChange)="bumpVersion()" name="gl_branch" />
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- STEP 3: Summary -->
+      @if (step() === 3) {
+        <div class="md:col-span-2 grid lg:grid-cols-2 gap-4">
+          <!-- Left: Basics -->
+          <div class="rounded-xl border border-[#00187C]/10 bg-white/90 p-5 shadow-sm">
+            <div class="flex items-center justify-between">
+              <h4 class="text-sm font-medium text-[#00187C]">Basics</h4>
+              <button type="button" (click)="setStep(1)" class="text-[11px] text-[#00187C] underline">Edit</button>
+            </div>
+            <div class="mt-3 text-sm text-[#00187C]/90">
+              <div class="font-medium">{{ form.name || '—' }}</div>
+              <div class="mt-1 text-[12px]">{{ form.description || 'No description' }}</div>
+            </div>
+          </div>
+
+          <!-- Right: Enabled providers -->
+          <div class="rounded-xl border border-[#00187C]/10 bg-white/90 p-5 shadow-sm">
+            <div class="flex items-center justify-between">
+              <h4 class="text-sm font-medium text-[#00187C]">Enabled providers</h4>
+              <button type="button" (click)="setStep(2)" class="text-[11px] text-[#00187C] underline">Edit</button>
+            </div>
+            <div class="mt-3 flex flex-wrap gap-2 text-[11px]">
+              @for (p of enabledProviders(); track p) {
+                <span class="rounded-full px-2 py-1 border border-[#00187C]/20">{{ p }}</span>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- Detailed recap -->
+        <div class="md:col-span-2 rounded-xl border border-[#00187C]/10 bg-white/90 p-5 shadow-sm">
+          <h4 class="text-sm font-medium text-[#00187C]">Details</h4>
+          <div class="mt-3 grid md:grid-cols-2 gap-4 text-[12px] text-[#00187C]/90">
+            @if (providers().jira) {
+              <div>
+                <div class="font-medium text-[#00187C]">Jira</div>
+                <div class="mt-1">URL: {{ form.jira.url || '—' }}</div>
+                <div>Project key: {{ form.jira.project_key || '—' }}</div>
+              </div>
+            }
+            @if (providers().confluence) {
+              <div>
+                <div class="font-medium text-[#00187C]">Confluence</div>
+                <div class="mt-1">URL: {{ form.confluence.url || '—' }}</div>
+                <div>Space key: {{ form.confluence.space_key || '—' }}</div>
+              </div>
+            }
+            @if (providers().sharepoint) {
+              <div>
+                <div class="font-medium text-[#00187C]">SharePoint</div>
+                <div class="mt-1">Site URL: {{ form.sharepoint.site_url || '—' }}</div>
+              </div>
+            }
+            @if (providers().github) {
+              <div>
+                <div class="font-medium text-[#00187C]">GitHub</div>
+                <div class="mt-1">URL: {{ form.github.url || '—' }}</div>
+                <div>Owner/Repo: {{ (form.github.default_owner || '—') + '/' + (form.github.default_repo || '—') }}</div>
+                <div>Branch: {{ form.github.default_branch || '—' }}</div>
+              </div>
+            }
+            @if (providers().gitlab) {
+              <div>
+                <div class="font-medium text-[#00187C]">GitLab</div>
+                <div class="mt-1">URL: {{ form.gitlab.url || '—' }}</div>
+                <div>Owner/Repo: {{ (form.gitlab.default_owner || '—') + '/' + (form.gitlab.default_repo || '—') }}</div>
+                <div>Branch: {{ form.gitlab.default_branch || '—' }}</div>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Checks -->
+        <div class="md:col-span-2 rounded-xl border border-[#00187C]/10 bg-white/90 p-5 shadow-sm">
+          <h4 class="text-sm font-medium text-[#00187C]">Checks</h4>
+          <ul class="mt-3 text-xs text-[#00187C]/90 list-disc pl-4 space-y-1">
+            <li>Name provided</li>
+            <li>Provider credentials filled where enabled</li>
+            <li>Looks good — create when ready</li>
+          </ul>
+        </div>
+      }
+
+      <!-- Footer actions -->
+      <div class="md:col-span-2 fixed inset-x-0 bottom-0 z-20 bg-white/95 border-t border-[#00187C]/10 px-8 py-3 flex items-center justify-between">
+        <div class="text-[11px] text-[#00187C]/60">
+          @switch (step()) {
+            @case (1) { <span>Step 1 of 3 — Basics</span> }
+            @case (2) { <span>Step 2 of 3 — Providers</span> }
+            @case (3) { <span>Step 3 of 3 — Review</span> }
+          }
+        </div>
+        <div class="flex items-center gap-2">
+          @if (step() === 3 && !canSubmit()) {
+            <div class="text-[11px] text-red-600 mr-2">
+              Missing: {{ githubMissing().join(', ') || '—' }}
+            </div>
+          }
+          <a routerLink="/workspaces" class="rounded border border-[#00187C]/20 px-4 py-2 text-xs text-[#00187C] bg-white/80 hover:bg-white">Cancel</a>
+          <button type="button" class="rounded border border-[#00187C]/20 px-4 py-2 text-xs text-[#00187C] bg-white/80 hover:bg-white" (click)="back()" [disabled]="step()===1">Back</button>
+          @if (step() < 3) {
+            <button type="button" (click)="next()" [disabled]="!canNext()" class="rounded px-4 py-2 text-xs text-white disabled:opacity-60" style="background: linear-gradient(90deg, #00187C, #E04580)">Next</button>
+          }
+          @if (step() === 3) {
+            <button type="submit" [disabled]="!canSubmit() || submitting()" class="rounded px-4 py-2 text-xs text-white disabled:opacity-60" style="background: linear-gradient(90deg, #00187C, #E04580)">Create</button>
+          }
+        </div>
+      </div>
+    </form>
+  </div>
+</section>

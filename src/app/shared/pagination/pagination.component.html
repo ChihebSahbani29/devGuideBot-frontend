@@ -1,0 +1,42 @@
+<div class="flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
+  <!-- Range + size -->
+  <div class="flex items-center gap-3 text-sm text-[#00187C] font-light">
+    <span>
+      {{ total === 0 ? '0' : (startIndex + '–' + endIndex) }} of {{ total }}
+    </span>
+    <span class="hidden sm:inline text-[#00187C]/30">|</span>
+    <label class="inline-flex items-center gap-2">
+      <span class="text-[#00187C]/70">Per page</span>
+      <select
+        class="rounded-md border border-[#00187C]/20 bg-white/80 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#8F9424]"
+        [value]="pageSize"
+        (change)="onSizeChange($event)"
+      >
+        <option *ngFor="let opt of pageSizeOptions" [value]="opt">{{ opt }}</option>
+      </select>
+    </label>
+  </div>
+
+  <!-- Controls -->
+  <div class="inline-flex items-center gap-1">
+    <button type="button" class="rounded-md px-2 py-1 text-xs text-[#00187C] border border-[#00187C]/20 bg-white hover:bg-[#00187C]/5"
+            (click)="first()" [disabled]="page <= 1">« First</button>
+    <button type="button" class="rounded-md px-2 py-1 text-xs text-[#00187C] border border-[#00187C]/20 bg-white hover:bg-[#00187C]/5"
+            (click)="prev()" [disabled]="page <= 1">‹ Prev</button>
+
+    <!-- Page window with active style -->
+    <ng-container *ngFor="let p of pages">
+      <button type="button"
+              class="rounded-md px-2.5 py-1 text-xs border transition"
+              [class]="p === page
+                ? 'bg-[#00187C] text-white border-[#00187C]'
+                : 'text-[#00187C] border-[#00187C]/20 bg-white hover:bg-[#00187C]/5'"
+              (click)="toPage(p)">{{ p }}</button>
+    </ng-container>
+
+    <button type="button" class="rounded-md px-2 py-1 text-xs text-[#00187C] border border-[#00187C]/20 bg-white hover:bg-[#00187C]/5"
+            (click)="next()" [disabled]="page >= totalPages()">Next ›</button>
+    <button type="button" class="rounded-md px-2 py-1 text-xs text-[#00187C] border border-[#00187C]/20 bg-white hover:bg-[#00187C]/5"
+            (click)="last()" [disabled]="page >= totalPages()">Last »</button>
+  </div>
+</div>
