@@ -7,6 +7,7 @@ import { Message } from '../../conversations.types';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './conversation-thread.component.html',
+  styleUrl: './conversation-thread.component.scss'
 })
 export class ConversationThreadComponent {
   @Input({ required: true }) messages: Message[] = [];

@@ -1,0 +1,45 @@
+.message-container {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.user-message {
+  justify-content: flex-end;
+}
+
+.assistant-message {
+  justify-content: flex-start;
+}
+
+.message-bubble {
+  padding: 10px 15px;
+  border-radius: 15px;
+  max-width: 80%;
+  word-wrap: break-word;
+}
+
+.user-message .message-bubble {
+  background-color: #f0f0f0; /* Gray background for user messages */
+  color: #000;
+}
+
+.assistant-message .message-bubble {
+  background-color: #00187C;
+  color: #fff;
+}
+
+.role-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 5px;
+  color: #00187C;
+}
+
+.user-message .role-label {
+  color: #666;
+}
+
+.assistant-message .role-label {
+    color: #f0f0f0;
+}
